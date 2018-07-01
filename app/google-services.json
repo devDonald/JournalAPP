@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "936031486028",
+    "firebase_url": "https://journalapp-4e479.firebaseio.com",
+    "project_id": "journalapp-4e479",
+    "storage_bucket": "journalapp-4e479.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936031486028:android:f1d888847d68cca3",
+        "android_client_info": {
+          "package_name": "donald.com.journalapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "936031486028-8tpfm383aroljocle1i6nj3br3t77pj6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "donald.com.journalapp",
+            "certificate_hash": "ddd41d1ef153c4939a3bc05d68ceff404439546b"
+          }
+        },
+        {
+          "client_id": "936031486028-5j06i7p7m0fjj1barodb05hs683qtspd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6N9WWmCGxqPc4IGCdOBhi-qRKaD77StE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "936031486028-5j06i7p7m0fjj1barodb05hs683qtspd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
