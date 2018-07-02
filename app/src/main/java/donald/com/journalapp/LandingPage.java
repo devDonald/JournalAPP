@@ -6,9 +6,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.valdesekamdem.library.mdtoast.MDToast;
+
 public class LandingPage extends AppCompatActivity {
     private Button mLoginButton;
     private Button mRegisterButton;
+    private FirebaseAuth mAuth;
+    private FirebaseUser mCurrentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +23,15 @@ public class LandingPage extends AppCompatActivity {
 
         mLoginButton = findViewById(R.id.bt_login);
         mRegisterButton = findViewById(R.id.bt_register);
+
+        mAuth = FirebaseAuth.getInstance();
+        mCurrentUser = mAuth.getCurrentUser();
+        if (mCurrentUser!=null){
+            MDToast.makeText(getApplicationContext(),getString(R.string.login_success),
+                    MDToast.LENGTH_LONG,MDToast.TYPE_SUCCESS).show();
+            startActivity(new Intent(LandingPage.this,Home.class));
+            finish();
+        }
 
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override

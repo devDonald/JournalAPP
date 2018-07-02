@@ -29,9 +29,20 @@
         <activity
             android:name=".Login"
             android:label="@string/app_name" />
-        <activity android:name=".AddJournal" />
+        <activity
+            android:name=".AddJournal"
+            android:label="@string/add_journal"/>
         <activity android:name=".PasswordRecovery" />
-        <activity android:name=".ViewJournal"></activity>
+        <activity
+            android:name=".ViewJournal"
+            android:label="@string/my_journals"
+            android:parentActivityName=".Home">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Home" />
+        </activity>
+        <activity android:name=".EditJournal"
+            android:label="@string/action_edit"></activity>
     </application>
 
 </manifest>

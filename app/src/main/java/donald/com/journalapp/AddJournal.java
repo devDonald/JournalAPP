@@ -110,8 +110,13 @@ public class AddJournal extends AppCompatActivity {
 
             mJournalsDatabase.child(uID).child(id).setValue(journals);
 
-            startActivity(new Intent(AddJournal.this, Home.class));
+
+            Intent addJournal = new Intent(AddJournal.this, Home.class);
+
+            startActivity(addJournal);
+
             finish();
+
         }
     }
 

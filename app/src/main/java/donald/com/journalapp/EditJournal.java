@@ -3,9 +3,11 @@ package donald.com.journalapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -16,29 +18,30 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class ViewJournal extends AppCompatActivity {
-    private static final String TAG = "ViewJournals";
+public class EditJournal extends AppCompatActivity {
+    private static final String TAG ="EditJournal" ;
+    private EditText mJournalContent;
     private DatabaseReference mAllJournalsDatabase;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private String uID;
-    private TextView mContent, mCategory, mDate;
     private String position;
+    private TextView mCategory, mDate;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_journal);
+        setContentView(R.layout.activity_edit_journal);
 
-        mContent = (TextView) findViewById(R.id.text_full_content);
-        mCategory = (TextView) findViewById(R.id.full_category);
-        mDate = (TextView)findViewById(R.id.full_date);
+        mJournalContent = (EditText) findViewById(R.id.edit_content);
+        mCategory = (TextView) findViewById(R.id.edit_category);
+        mDate = (TextView) findViewById(R.id.edit_date);
 
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         uID = mUser.getUid();
         mAllJournalsDatabase = FirebaseDatabase.getInstance().getReference("My Journals").child(uID);
-
 
         Bundle extras = getIntent().getExtras();
         if (extras!=null) {
@@ -52,7 +55,7 @@ public class ViewJournal extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Log.d("ds",""+ds);
 
-                        mContent.setText(dataSnapshot.child("content").getValue(String.class));
+                        mJournalContent.setText(dataSnapshot.child("content").getValue(String.class));
                         mCategory.setText(dataSnapshot.child("category").getValue(String.class));
                         mDate.setText(dataSnapshot.child("date").getValue(String.class));
                     }
@@ -69,12 +72,13 @@ public class ViewJournal extends AppCompatActivity {
             }
 
         }
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.edit_journal, menu);
+        getMenuInflater().inflate(R.menu.journal_done, menu);
         return true;
     }
 
@@ -86,21 +90,26 @@ public class ViewJournal extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_edit) {
-            Intent edit = new Intent(ViewJournal.this,EditJournal.class);
-            edit.putExtra("position",position);
-            startActivity(edit);
+        if (id == R.id.action_done) {
+            updateJournal();
+        }
 
-        } else if (id==R.id.action_delete){
-            mAllJournalsDatabase.child(position).removeValue();
-            Intent viewJournal = new Intent(ViewJournal.this, Home.class);
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void updateJournal() {
+        String updateContent = mJournalContent.getText().toString().trim();
+        if (!TextUtils.isEmpty(updateContent)){
+
+            mAllJournalsDatabase.child(position).child("content").setValue(updateContent);
+
+            Intent viewJournal = new Intent(EditJournal.this, Home.class);
             viewJournal.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             viewJournal.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             viewJournal.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(viewJournal);
             finish();
         }
-
-        return super.onOptionsItemSelected(item);
     }
+
 }

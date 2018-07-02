@@ -1,7 +1,9 @@
 package donald.com.journalapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,16 +14,23 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.appinvite.AppInviteInvitation;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.appinvite.FirebaseAppInvite;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
+import com.valdesekamdem.library.mdtoast.MDToast;
 
 import java.util.List;
 
@@ -34,6 +43,8 @@ public class Home extends AppCompatActivity
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private String uID;
+    private static final String TAG = Home.class.getSimpleName();
+    private static final int REQUEST_INVITE = 0;
     private List<JournalsModel> list;
     FirebaseRecyclerAdapter<JournalsModel,RecyclerAdapter> firebaseRecyclerAdapter;
 
@@ -74,6 +85,44 @@ public class Home extends AppCompatActivity
         mJournalRecycler.setLayoutManager(manager);
         mJournalRecycler.setItemAnimator( new DefaultItemAnimator());
 
+        FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+                    @Override
+                    public void onSuccess(PendingDynamicLinkData data) {
+                        if (data == null) {
+                            Log.d(TAG, "getInvitation: no data");
+                            return;
+                        }
+
+                        // Get the deep link
+                        Uri deepLink = data.getLink();
+
+                        // Extract invite
+                        FirebaseAppInvite invite = FirebaseAppInvite.getInvitation(data);
+                        if (invite != null) {
+                            String invitationId = invite.getInvitationId();
+                        }
+
+                        // Handle the deep link
+                        // [START_EXCLUDE]
+                        Log.d(TAG, "deepLink:" + deepLink);
+                        if (deepLink != null) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setPackage(getPackageName());
+                            intent.setData(deepLink);
+
+                            startActivity(intent);
+                        }
+                        // [END_EXCLUDE]
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "getDynamicLink:onFailure", e);
+                    }
+                });
+
     }
 
     @Override
@@ -84,28 +133,6 @@ public class Home extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.navigation_drawer, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -128,6 +155,7 @@ public class Home extends AppCompatActivity
 
         } else if (id == R.id.nav_share) {
             //handles sharing of app
+            onInviteClicked();
 
         } else if (id == R.id.nav_exit_app) {
             //handles exiting app
@@ -181,4 +209,39 @@ public class Home extends AppCompatActivity
         };
         mJournalRecycler.setAdapter(firebaseRecyclerAdapter);
     }
+
+    private void onInviteClicked() {
+        Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
+                .setMessage(getString(R.string.invitation_message))
+                .setDeepLink(Uri.parse(getString(R.string.invitation_deep_link)))
+                .setCustomImage(Uri.parse(getString(R.string.invitation_custom_image)))
+                .setCallToActionText(getString(R.string.invitation_cta))
+                .build();
+        startActivityForResult(intent, REQUEST_INVITE);
+    }
+    // [END on_invite_clicked]
+
+    // [START on_activity_result]
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
+
+        if (requestCode == REQUEST_INVITE) {
+            if (resultCode == RESULT_OK) {
+                // Get the invitation IDs of all sent messages
+                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+                for (String id : ids) {
+                    Log.d(TAG, "onActivityResult: sent invitation " + id);
+                }
+            } else {
+                // Sending failed or it was canceled, show failure message to the user
+                // [START_EXCLUDE]
+                MDToast.makeText(getApplicationContext(),getString(R.string.send_failed),
+                        MDToast.TYPE_ERROR,MDToast.LENGTH_LONG).show();
+                // [END_EXCLUDE]
+            }
+        }
+    }
+
 }
