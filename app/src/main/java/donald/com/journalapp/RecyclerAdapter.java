@@ -19,6 +19,10 @@ public class RecyclerAdapter extends RecyclerView.ViewHolder{
             }
         });
     }
+    public void setTitle(String title){
+        TextView tv_title = (TextView)mView.findViewById(R.id.tv_title);
+        tv_title.setText(title);
+    }
     public void setContent(String content){
         TextView tv_content=(TextView)mView.findViewById(R.id.tv_content);
         tv_content.setText(content);

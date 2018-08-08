@@ -1,15 +1,24 @@
 package donald.com.journalapp.Models;
 
 public class JournalsModel {
-    private String content, category, date;
+    private String title, content, category, date;
 
     public JournalsModel() {
     }
 
-    public JournalsModel(String content, String category, String date) {
+    public JournalsModel(String title, String content, String category, String date) {
+        this.title = title;
         this.content = content;
         this.category = category;
         this.date = date;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContent() {

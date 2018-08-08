@@ -22,7 +22,7 @@ public class ViewJournal extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private String uID;
-    private TextView mContent, mCategory, mDate;
+    private TextView mTitle, mContent, mCategory, mDate;
     private String position;
 
     @Override
@@ -30,6 +30,7 @@ public class ViewJournal extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_journal);
 
+        mTitle = (TextView)findViewById(R.id.text_full_title);
         mContent = (TextView) findViewById(R.id.text_full_content);
         mCategory = (TextView) findViewById(R.id.full_category);
         mDate = (TextView)findViewById(R.id.full_date);
@@ -52,6 +53,7 @@ public class ViewJournal extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Log.d("ds",""+ds);
 
+                        mTitle.setText(dataSnapshot.child("title").getValue(String.class));
                         mContent.setText(dataSnapshot.child("content").getValue(String.class));
                         mCategory.setText(dataSnapshot.child("category").getValue(String.class));
                         mDate.setText(dataSnapshot.child("date").getValue(String.class));

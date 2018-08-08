@@ -181,6 +181,7 @@ public class Home extends AppCompatActivity
         ) {
             @Override
             protected void populateViewHolder(RecyclerAdapter viewHolder,JournalsModel model, int position) {
+                viewHolder.setTitle(model.getTitle());
                 viewHolder.setContent(model.getContent());
                 viewHolder.setCategory(model.getCategory());
                 viewHolder.setDate(model.getDate());

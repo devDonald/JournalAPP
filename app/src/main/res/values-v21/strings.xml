@@ -27,4 +27,6 @@
     <string name="action_delete">Delete</string>
     <string name="invitation_title">Invite a friend</string>
     <string name="invitation_message">Please come and Use the Personal Journal App</string>
+    <string name="journal_title">Journal Title</string>
+    <string name="journal_title_error">Journal Title cannot be empty</string>
 </resources>

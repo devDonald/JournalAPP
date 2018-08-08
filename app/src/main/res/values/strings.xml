@@ -70,6 +70,8 @@
     <string name="invite_dialog_title">You got an invitation!</string>
 
     <string name="google_play_services_error">Google Play Services Error</string>
+    <string name="journal_title">Journal Title</string>
+    <string name="journal_title_error">Journal Title cannot be empty</string>
 
     <string-array name="category">
         <item>Select category</item>

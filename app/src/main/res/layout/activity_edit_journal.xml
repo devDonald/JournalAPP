@@ -17,7 +17,16 @@
             android:textColor="@color/black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/edit_title"
+            android:layout_gravity="center"
+            android:textSize="28sp"/>
+
+        <EditText
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/edit_content"
+            android:inputType="textMultiLine|textCapSentences"
             android:layout_gravity="center"
             android:textSize="18sp"/>
         <LinearLayout

@@ -28,6 +28,7 @@ public class AddJournal extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser mCurrentUser;
     private EditText mJournalContent;
+    private EditText mJournalTitle;
     private Button mSelectDate;
     private Spinner mCategory;
     private String uID;
@@ -42,6 +43,7 @@ public class AddJournal extends AppCompatActivity {
         mJournalContent = (EditText) findViewById(R.id.journal_content);
         mSelectDate = (Button) findViewById(R.id.pick_date);
         mCategory =  (Spinner) findViewById(R.id.journal_category);
+        mJournalTitle = (EditText) findViewById(R.id.journal_title);
 
         mJournalsDatabase = FirebaseDatabase.getInstance().getReference("My Journals");
         mAuth = FirebaseAuth.getInstance();
@@ -93,8 +95,12 @@ public class AddJournal extends AppCompatActivity {
         String journalContent = mJournalContent.getText().toString().trim();
         String category = mCategory.getItemAtPosition(mCategory.getSelectedItemPosition()).toString();
         String journalDate = mSelectDate.getText().toString().trim();
+        String journalTitle = mJournalTitle.getText().toString().trim();
 
-        if (TextUtils.isEmpty(journalContent)){
+        if (TextUtils.isEmpty(journalTitle)){
+            MDToast.makeText(getApplicationContext(),getString(R.string.journal_title_error),
+                    MDToast.LENGTH_LONG,MDToast.TYPE_ERROR).show();
+        } else if (TextUtils.isEmpty(journalContent)){
             MDToast.makeText(getApplicationContext(),getString(R.string.journal_content_error),
                     MDToast.LENGTH_LONG,MDToast.TYPE_ERROR).show();
         } else if (category.equalsIgnoreCase("Select category")){
@@ -106,7 +112,7 @@ public class AddJournal extends AppCompatActivity {
         } else{
 
             String id = mJournalsDatabase.push().getKey();
-            JournalsModel journals = new JournalsModel(journalContent,category,journalDate);
+            JournalsModel journals = new JournalsModel(journalTitle,journalContent,category,journalDate);
 
             mJournalsDatabase.child(uID).child(id).setValue(journals);
 
